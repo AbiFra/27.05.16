@@ -1,0 +1,39 @@
+install.packages("foreign")
+require (foreign)
+install.packages("fpp")
+library (fpp)
+pib<- read.csv("C:\\Users\\SALA-C27\\Downloads\\PIB TRIMESTRAL A PRECIOS DE 20082.csv", header = FALSE)
+pibm<-ts(pib [,2], start=1993, frequency=4)
+M1<-auto.arima(pibm,seasonal= FALSE)
+M1
+##autorregresivo con diferenciacion 1 y deriva
+### -.4668yt-1
+##yt-1 datos aleatorios de la serie
+M2<-arima(pibm, order = c(0,2,3))
+M2
+##Pronoticos
+require(forecast)
+Pronosticos1<-forecast(M1, h=4)
+Pronosticos1
+plot(Pronosticos1)
+Pronosticos2<-forecast(M2, h=4)
+Pronosticos2
+plot(Pronosticos2)
+
+M3<-arima(pibm, order = c(0,3,1))
+M3
+Pronosticos3<-forecast(M3, h=4)
+Pronosticos3
+plot(Pronosticos3)
+
+plot(pibm,plot.conf=FALSE, ylab="tasas", xlab="Año", main=" ", fcol="white", type="o")
+lines(fitted(pibm), col="blue", type="o")
+lines(fitted(M1), col="red", type="o")
+lines(fitted(M2), col="green", type="o")
+lines(fitted(M3), col="pink", type="o")
+lines(Pronosticos1$mean, col="blue", type="o")
+lines(Pronosticos2$mean, col="red", type="o")
+lines(Pronosticos3$mean, col="green", type="o")
+legend("topleft",lty=1, col=c(1,"blue","red","green"), 
+       c("data", expression(alpha == 0.1), expression(alpha == 0.6),
+         expression(alpha == .9)), pch=1)
